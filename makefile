@@ -28,77 +28,76 @@ obj/%.o: %.c $(TOTAL_REBUILD_FILES)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-tests/cases/%/outputs/actual/viewport/reds.data: \
+tests/cases/%/outputs/actual/viewport/opacities.data: \
 	dist/% \
+	tests/cases/%/inputs/viewport/opacities.data \
 	tests/cases/%/inputs/viewport/reds.data \
 	tests/cases/%/inputs/viewport/greens.data \
 	tests/cases/%/inputs/viewport/blues.data \
-	tests/cases/%/inputs/viewport/opacities.data \
 	tests/cases/%/inputs/viewport/depths.data \
+	tests/cases/%/inputs/texture/opacities.data \
 	tests/cases/%/inputs/texture/reds.data \
 	tests/cases/%/inputs/texture/greens.data \
-	tests/cases/%/inputs/texture/blues.data \
-	tests/cases/%/inputs/texture/opacities.data
+	tests/cases/%/inputs/texture/blues.data
 	mkdir -p $(dir $@)
 	mkdir -p $(dir $(patsubst %/, %, $(dir $@)))texture/
 	cd tests/cases/$* && ../../../dist/$*
 
-tests/cases/%/outputs/actual/viewport/greens.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/viewport/reds.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/viewport/blues.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/viewport/greens.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/viewport/opacities.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/viewport/blues.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/viewport/depths.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/viewport/depths.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/texture/reds.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/texture/reds.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/texture/greens.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/texture/greens.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/texture/blues.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/texture/blues.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
-tests/cases/%/outputs/actual/texture/opacities.data: tests/cases/%/outputs/actual/viewport/reds.data
+tests/cases/%/outputs/actual/texture/opacities.data: tests/cases/%/outputs/actual/viewport/opacities.data
 	echo
 
 tests/cases/%.hex: tests/cases/%.data
 	xxd $< > $@
 
 tests/pass_markers/%: \
+		tests/cases/%/outputs/expected/viewport/opacities.hex \
 		tests/cases/%/outputs/expected/viewport/reds.hex \
 		tests/cases/%/outputs/expected/viewport/greens.hex \
 		tests/cases/%/outputs/expected/viewport/blues.hex \
-		tests/cases/%/outputs/expected/viewport/opacities.hex \
 		tests/cases/%/outputs/expected/viewport/depths.hex \
+		tests/cases/%/outputs/expected/texture/opacities.hex \
 		tests/cases/%/outputs/expected/texture/reds.hex \
 		tests/cases/%/outputs/expected/texture/greens.hex \
 		tests/cases/%/outputs/expected/texture/blues.hex \
-		tests/cases/%/outputs/expected/texture/opacities.hex \
+		tests/cases/%/outputs/actual/viewport/opacities.hex \
 		tests/cases/%/outputs/actual/viewport/reds.hex \
 		tests/cases/%/outputs/actual/viewport/greens.hex \
 		tests/cases/%/outputs/actual/viewport/blues.hex \
-		tests/cases/%/outputs/actual/viewport/opacities.hex \
 		tests/cases/%/outputs/actual/viewport/depths.hex \
+		tests/cases/%/outputs/actual/texture/opacities.hex \
 		tests/cases/%/outputs/actual/texture/reds.hex \
 		tests/cases/%/outputs/actual/texture/greens.hex \
-		tests/cases/%/outputs/actual/texture/blues.hex \
-		tests/cases/%/outputs/actual/texture/opacities.hex
+		tests/cases/%/outputs/actual/texture/blues.hex
+	diff tests/cases/$*/outputs/expected/viewport/opacities.hex tests/cases/$*/outputs/actual/viewport/opacities.hex
 	diff tests/cases/$*/outputs/expected/viewport/reds.hex tests/cases/$*/outputs/actual/viewport/reds.hex
 	diff tests/cases/$*/outputs/expected/viewport/greens.hex tests/cases/$*/outputs/actual/viewport/greens.hex
 	diff tests/cases/$*/outputs/expected/viewport/blues.hex tests/cases/$*/outputs/actual/viewport/blues.hex
-	diff tests/cases/$*/outputs/expected/viewport/opacities.hex tests/cases/$*/outputs/actual/viewport/opacities.hex
 	diff tests/cases/$*/outputs/expected/viewport/depths.hex tests/cases/$*/outputs/actual/viewport/depths.hex
-
+	diff tests/cases/$*/outputs/expected/texture/opacities.hex tests/cases/$*/outputs/actual/texture/opacities.hex
 	diff tests/cases/$*/outputs/expected/texture/reds.hex tests/cases/$*/outputs/actual/texture/reds.hex
 	diff tests/cases/$*/outputs/expected/texture/greens.hex tests/cases/$*/outputs/actual/texture/greens.hex
 	diff tests/cases/$*/outputs/expected/texture/blues.hex tests/cases/$*/outputs/actual/texture/blues.hex
-	diff tests/cases/$*/outputs/expected/texture/opacities.hex tests/cases/$*/outputs/actual/texture/opacities.hex
 	mkdir -p $(dir $@)
 	touch $@
 
