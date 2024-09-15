@@ -48,18 +48,6 @@ static void multiply_add_f32s_f32_f32s(
   }
 }
 
-static void add_f32s_f32s(
-    const float *const augends,
-    const float *const addends,
-    float *const sums,
-    const int quantity)
-{
-  for (int index = 0; index < quantity; index++)
-  {
-    sums[index] = augends[index] + addends[index];
-  }
-}
-
 static void sort_top_to_bottom(
     float *const vertices,
     const int f32s_per_vertex,
@@ -191,7 +179,12 @@ static void row(
       viewport_blues[camera_index] = accumulators[5] * texture_blues[texture_index];
     }
 
-    add_f32s_f32s(accumulators, per_columns, accumulators, 6);
+    accumulators[0] += per_columns[0];
+    accumulators[1] += per_columns[1];
+    accumulators[2] += per_columns[2];
+    accumulators[3] += per_columns[3];
+    accumulators[4] += per_columns[4];
+    accumulators[5] += per_columns[5];
   }
 }
 
@@ -314,7 +307,20 @@ void opaque_triangle(
         viewport_opacities,
         viewport_depths);
 
-    add_f32s_f32s(accumulators, per_rows, accumulators, 14);
+    accumulators[0] += per_rows[0];
+    accumulators[1] += per_rows[1];
+    accumulators[2] += per_rows[2];
+    accumulators[3] += per_rows[3];
+    accumulators[4] += per_rows[4];
+    accumulators[5] += per_rows[5];
+    accumulators[6] += per_rows[6];
+    accumulators[7] += per_rows[7];
+    accumulators[8] += per_rows[8];
+    accumulators[9] += per_rows[9];
+    accumulators[10] += per_rows[10];
+    accumulators[11] += per_rows[11];
+    accumulators[12] += per_rows[12];
+    accumulators[13] += per_rows[13];
   }
 
   subtract_f32s_f32s(bottom, middle, deltas, 8);
@@ -350,6 +356,19 @@ void opaque_triangle(
         viewport_opacities,
         viewport_depths);
 
-    add_f32s_f32s(accumulators, per_rows, accumulators, 14);
+    accumulators[0] += per_rows[0];
+    accumulators[1] += per_rows[1];
+    accumulators[2] += per_rows[2];
+    accumulators[3] += per_rows[3];
+    accumulators[4] += per_rows[4];
+    accumulators[5] += per_rows[5];
+    accumulators[6] += per_rows[6];
+    accumulators[7] += per_rows[7];
+    accumulators[8] += per_rows[8];
+    accumulators[9] += per_rows[9];
+    accumulators[10] += per_rows[10];
+    accumulators[11] += per_rows[11];
+    accumulators[12] += per_rows[12];
+    accumulators[13] += per_rows[13];
   }
 }
