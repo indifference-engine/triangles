@@ -1,17 +1,5 @@
 #include "opaque_triangle.h"
 
-static void multiply_f32s_f32(
-    const float *const multipliers,
-    const float multiplicand,
-    float *const products,
-    const int quantity)
-{
-  for (int index = 0; index < quantity; index++)
-  {
-    products[index] = multipliers[index] * multiplicand;
-  }
-}
-
 static void multiply_add_f32s_f32_f32s(
     const float *const multipliers,
     const float multiplicand,
@@ -109,7 +97,13 @@ static void row(
   per_columns[4] = row_accumulators[12] - row_accumulators[5];
   per_columns[5] = row_accumulators[13] - row_accumulators[6];
 
-  multiply_f32s_f32(per_columns, 1.0f / (second_camera_column - first_camera_column), per_columns, 6);
+  const float multiplicand = 1.0f / (second_camera_column - first_camera_column);
+  per_columns[0] *= multiplicand;
+  per_columns[1] *= multiplicand;
+  per_columns[2] *= multiplicand;
+  per_columns[3] *= multiplicand;
+  per_columns[4] *= multiplicand;
+  per_columns[5] *= multiplicand;
 
   int clamped_left_camera_column, clamped_right_camera_column;
 
@@ -270,10 +264,25 @@ void opaque_triangle(
   deltas[14] = middle[6] - top[6];
   deltas[15] = middle[7] - top[7];
 
-  float per_rows[17];
-  multiply_f32s_f32(&deltas[1], 1.0f / deltas[0], per_rows, 7);
+  const float multiplicand_a = 1.0f / deltas[0];
   const float short_camera_row_delta = deltas[8];
-  multiply_f32s_f32(&deltas[9], 1.0f / short_camera_row_delta, &per_rows[7], 7);
+  const float multiplicand_b = 1.0f / short_camera_row_delta;
+
+  float per_rows[17];
+  per_rows[0] = deltas[1] * multiplicand_a;
+  per_rows[1] = deltas[2] * multiplicand_a;
+  per_rows[2] = deltas[3] * multiplicand_a;
+  per_rows[3] = deltas[4] * multiplicand_a;
+  per_rows[4] = deltas[5] * multiplicand_a;
+  per_rows[5] = deltas[6] * multiplicand_a;
+  per_rows[6] = deltas[7] * multiplicand_a;
+  per_rows[7] = deltas[9] * multiplicand_b;
+  per_rows[8] = deltas[10] * multiplicand_b;
+  per_rows[9] = deltas[11] * multiplicand_b;
+  per_rows[10] = deltas[12] * multiplicand_b;
+  per_rows[11] = deltas[13] * multiplicand_b;
+  per_rows[12] = deltas[14] * multiplicand_b;
+  per_rows[13] = deltas[15] * multiplicand_b;
 
   float accumulators[17];
 
@@ -351,7 +360,14 @@ void opaque_triangle(
   deltas[6] = bottom[6] - middle[6];
   deltas[7] = bottom[7] - middle[7];
 
-  multiply_f32s_f32(&deltas[1], 1.0f / deltas[0], &per_rows[7], 7);
+  const float multiplicand_c = 1.0f / deltas[0];
+  per_rows[7] = deltas[1] * multiplicand_c;
+  per_rows[8] = deltas[2] * multiplicand_c;
+  per_rows[9] = deltas[3] * multiplicand_c;
+  per_rows[10] = deltas[4] * multiplicand_c;
+  per_rows[11] = deltas[5] * multiplicand_c;
+  per_rows[12] = deltas[6] * multiplicand_c;
+  per_rows[13] = deltas[7] * multiplicand_c;
 
   if (middle_camera_row < 0)
   {
