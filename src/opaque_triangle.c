@@ -18,8 +18,8 @@ static void row(
   float per_columns[6];
   float accumulators[6];
 
-  const float first_camera_column = row_accumulators[0];
-  const float second_camera_column = row_accumulators[7];
+  const float first_column = row_accumulators[0];
+  const float second_column = row_accumulators[7];
 
   per_columns[0] = row_accumulators[8] - row_accumulators[1];
   per_columns[1] = row_accumulators[9] - row_accumulators[2];
@@ -28,7 +28,7 @@ static void row(
   per_columns[4] = row_accumulators[12] - row_accumulators[5];
   per_columns[5] = row_accumulators[13] - row_accumulators[6];
 
-  const float multiplicand = 1.0f / (second_camera_column - first_camera_column);
+  const float multiplicand = 1.0f / (second_column - first_column);
   per_columns[0] *= multiplicand;
   per_columns[1] *= multiplicand;
   per_columns[2] *= multiplicand;
@@ -36,12 +36,12 @@ static void row(
   per_columns[4] *= multiplicand;
   per_columns[5] *= multiplicand;
 
-  int clamped_left_camera_column, clamped_right_camera_column;
+  int clamped_left_column, clamped_right_column;
 
-  if (first_camera_column < second_camera_column)
+  if (first_column < second_column)
   {
-    clamped_left_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
-    clamped_right_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
+    clamped_left_column = first_column < 0 ? ((int)first_column) - 1 : first_column;
+    clamped_right_column = second_column < 0 ? ((int)second_column) - 1 : second_column;
     accumulators[0] = row_accumulators[1];
     accumulators[1] = row_accumulators[2];
     accumulators[2] = row_accumulators[3];
@@ -51,8 +51,8 @@ static void row(
   }
   else
   {
-    clamped_left_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
-    clamped_right_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
+    clamped_left_column = second_column < 0 ? ((int)second_column) - 1 : second_column;
+    clamped_right_column = first_column < 0 ? ((int)first_column) - 1 : first_column;
     accumulators[0] = row_accumulators[8];
     accumulators[1] = row_accumulators[9];
     accumulators[2] = row_accumulators[10];
@@ -61,27 +61,27 @@ static void row(
     accumulators[5] = row_accumulators[13];
   }
 
-  if (clamped_left_camera_column < 0)
+  if (clamped_left_column < 0)
   {
-    const float negated_clamp_left_camera_column = -clamped_left_camera_column;
-    accumulators[0] += per_columns[0] * negated_clamp_left_camera_column;
-    accumulators[1] += per_columns[1] * negated_clamp_left_camera_column;
-    accumulators[2] += per_columns[2] * negated_clamp_left_camera_column;
-    accumulators[3] += per_columns[3] * negated_clamp_left_camera_column;
-    accumulators[4] += per_columns[4] * negated_clamp_left_camera_column;
-    clamped_left_camera_column = 0;
+    const float negated_clamp_left_column = -clamped_left_column;
+    accumulators[0] += per_columns[0] * negated_clamp_left_column;
+    accumulators[1] += per_columns[1] * negated_clamp_left_column;
+    accumulators[2] += per_columns[2] * negated_clamp_left_column;
+    accumulators[3] += per_columns[3] * negated_clamp_left_column;
+    accumulators[4] += per_columns[4] * negated_clamp_left_column;
+    clamped_left_column = 0;
   }
 
-  clamped_right_camera_column = clamped_right_camera_column < viewport_columns ? clamped_right_camera_column : viewport_columns;
+  clamped_right_column = clamped_right_column < viewport_columns ? clamped_right_column : viewport_columns;
 
-  const int left_index = camera_row * viewport_columns + clamped_left_camera_column;
-  const int right_index = left_index + clamped_right_camera_column - clamped_left_camera_column;
+  const int left_index = camera_row * viewport_columns + clamped_left_column;
+  const int right_index = left_index + clamped_right_column - clamped_left_column;
 
-  for (int camera_index = left_index; camera_index < right_index; camera_index++)
+  for (int viewport_index = left_index; viewport_index < right_index; viewport_index++)
   {
     const float source_depth = accumulators[0];
 
-    if (source_depth < viewport_depths[camera_index])
+    if (source_depth < viewport_depths[viewport_index])
     {
       const float texture_row_float = texture_rows * accumulators[1];
       const int texture_row = texture_row_float < 0 ? ((int)texture_row_float) - 1 : texture_row_float;
@@ -95,11 +95,11 @@ static void row(
 
       const int texture_index = wrapped_texture_row * texture_columns + wrapped_texture_column;
 
-      viewport_depths[camera_index] = source_depth;
-      viewport_opacities[camera_index] = 1.0f;
-      viewport_reds[camera_index] = accumulators[3] * texture_reds[texture_index];
-      viewport_greens[camera_index] = accumulators[4] * texture_greens[texture_index];
-      viewport_blues[camera_index] = accumulators[5] * texture_blues[texture_index];
+      viewport_depths[viewport_index] = source_depth;
+      viewport_opacities[viewport_index] = 1.0f;
+      viewport_reds[viewport_index] = accumulators[3] * texture_reds[texture_index];
+      viewport_greens[viewport_index] = accumulators[4] * texture_greens[texture_index];
+      viewport_blues[viewport_index] = accumulators[5] * texture_blues[texture_index];
     }
 
     accumulators[0] += per_columns[0];
@@ -245,8 +245,8 @@ void opaque_triangle(
   deltas[15] = middle[7] - top[7];
 
   const float multiplicand_a = 1.0f / deltas[0];
-  const float short_camera_row_delta = deltas[8];
-  const float multiplicand_b = 1.0f / short_camera_row_delta;
+  const float short_row_delta = deltas[8];
+  const float multiplicand_b = 1.0f / short_row_delta;
 
   float per_rows[17];
   per_rows[0] = deltas[1] * multiplicand_a;
@@ -266,13 +266,13 @@ void opaque_triangle(
 
   float accumulators[17];
 
-  const float top_camera_row_float = top[0];
-  const int top_camera_row = top_camera_row_float < 0 ? ((int)top_camera_row_float) - 1 : top_camera_row_float;
-  const int clamped_top_camera_row = top_camera_row < 0 ? 0 : top_camera_row;
+  const float top_row_float = top[0];
+  const int top_row = top_row_float < 0 ? ((int)top_row_float) - 1 : top_row_float;
+  const int clamped_top_row = top_row < 0 ? 0 : top_row;
 
-  if (top_camera_row < 0)
+  if (top_row < 0)
   {
-    const float skipped_rows = -top_camera_row;
+    const float skipped_rows = -top_row;
     accumulators[0] = per_rows[0] * skipped_rows + top[1];
     accumulators[1] = per_rows[1] * skipped_rows + top[2];
     accumulators[2] = per_rows[2] * skipped_rows + top[3];
@@ -306,11 +306,11 @@ void opaque_triangle(
     accumulators[13] = top[7];
   }
 
-  const float middle_camera_row_float = middle[0];
-  const int middle_camera_row = middle_camera_row_float < 0 ? ((int)middle_camera_row_float) - 1 : middle_camera_row_float;
-  const int clamped_middle_camera_row = middle_camera_row < 0 ? 0 : (middle_camera_row > viewport_rows ? viewport_rows : middle_camera_row);
+  const float middle_row_float = middle[0];
+  const int middle_row = middle_row_float < 0 ? ((int)middle_row_float) - 1 : middle_row_float;
+  const int clamped_middle_row = middle_row < 0 ? 0 : (middle_row > viewport_rows ? viewport_rows : middle_row);
 
-  for (int camera_row = clamped_top_camera_row; camera_row < clamped_middle_camera_row; camera_row++)
+  for (int camera_row = clamped_top_row; camera_row < clamped_middle_row; camera_row++)
   {
     row(
         texture_rows,
@@ -361,9 +361,9 @@ void opaque_triangle(
   per_rows[12] = deltas[6] * multiplicand_c;
   per_rows[13] = deltas[7] * multiplicand_c;
 
-  if (middle_camera_row < 0)
+  if (middle_row < 0)
   {
-    const float skipped_rows = -middle_camera_row;
+    const float skipped_rows = -middle_row;
 
     accumulators[7] = per_rows[7] * skipped_rows + middle[1];
     accumulators[8] = per_rows[8] * skipped_rows + middle[2];
@@ -384,10 +384,10 @@ void opaque_triangle(
     accumulators[13] = middle[7];
   }
 
-  const int bottom_camera_row = *bottom;
-  const int clamped_bottom_camera_row = viewport_rows < bottom_camera_row ? viewport_rows : bottom_camera_row;
+  const int bottom_row = *bottom;
+  const int clamped_bottom_row = viewport_rows < bottom_row ? viewport_rows : bottom_row;
 
-  for (int camera_row = clamped_middle_camera_row; camera_row < clamped_bottom_camera_row; camera_row++)
+  for (int camera_row = clamped_middle_row; camera_row < clamped_bottom_row; camera_row++)
   {
     row(
         texture_rows,
