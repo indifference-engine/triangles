@@ -149,7 +149,7 @@ void opaque_triangle(
     float *const viewport_opacities,
     float *const viewport_depths)
 {
-  float vertices[] = {
+  const float a[8] = {
       a_row,    // 0
       a_column, // 1
       a_depth,  // 2
@@ -158,31 +158,33 @@ void opaque_triangle(
       a_red,    // 5
       a_green,  // 6
       a_blue,   // 7
-      b_row,    // 8
-      b_column, // 9
-      b_depth,  // 10
-      b_v,      // 11
-      b_u,      // 12
-      b_red,    // 13
-      b_green,  // 14
-      b_blue,   // 15
-      c_row,    // 16
-      c_column, // 17
-      c_depth,  // 18
-      c_v,      // 19
-      c_u,      // 20
-      c_red,    // 21
-      c_green,  // 22
-      c_blue,   // 23
+  };
+
+  const float b[8] = {
+      b_row,    // 0
+      b_column, // 1
+      b_depth,  // 2
+      b_v,      // 3
+      b_u,      // 4
+      b_red,    // 5
+      b_green,  // 6
+      b_blue,   // 7
+  };
+
+  const float c[8] = {
+      c_row,    // 0
+      c_column, // 1
+      c_depth,  // 2
+      c_v,      // 3
+      c_u,      // 4
+      c_red,    // 5
+      c_green,  // 6
+      c_blue,   // 7
   };
 
   const float *top;
   const float *middle;
   const float *bottom;
-
-  float *const a = vertices;
-  float *const b = &a[8];
-  float *const c = &b[8];
 
   if (a_row <= b_row)
   {
