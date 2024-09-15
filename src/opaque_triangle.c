@@ -1,13 +1,13 @@
 #include "opaque_triangle.h"
 
-static void row(
+static void opaque_row(
     const int texture_rows,
     const int texture_columns,
     const float *const texture_reds,
     const float *const texture_greens,
     const float *const texture_blues,
     const float row_accumulators[14],
-    const int camera_row,
+    const int row,
     const int viewport_columns,
     float *const viewport_reds,
     float *const viewport_greens,
@@ -74,7 +74,7 @@ static void row(
 
   clamped_right_column = clamped_right_column < viewport_columns ? clamped_right_column : viewport_columns;
 
-  const int left_index = camera_row * viewport_columns + clamped_left_column;
+  const int left_index = row * viewport_columns + clamped_left_column;
   const int right_index = left_index + clamped_right_column - clamped_left_column;
 
   for (int viewport_index = left_index; viewport_index < right_index; viewport_index++)
@@ -310,16 +310,16 @@ void opaque_triangle(
   const int middle_row = middle_row_float < 0 ? ((int)middle_row_float) - 1 : middle_row_float;
   const int clamped_middle_row = middle_row < 0 ? 0 : (middle_row > viewport_rows ? viewport_rows : middle_row);
 
-  for (int camera_row = clamped_top_row; camera_row < clamped_middle_row; camera_row++)
+  for (int row = clamped_top_row; row < clamped_middle_row; row++)
   {
-    row(
+    opaque_row(
         texture_rows,
         texture_columns,
         texture_reds,
         texture_greens,
         texture_blues,
         accumulators,
-        camera_row,
+        row,
         viewport_columns,
         viewport_reds,
         viewport_greens,
@@ -387,16 +387,16 @@ void opaque_triangle(
   const int bottom_row = *bottom;
   const int clamped_bottom_row = viewport_rows < bottom_row ? viewport_rows : bottom_row;
 
-  for (int camera_row = clamped_middle_row; camera_row < clamped_bottom_row; camera_row++)
+  for (int row = clamped_middle_row; row < clamped_bottom_row; row++)
   {
-    row(
+    opaque_row(
         texture_rows,
         texture_columns,
         texture_reds,
         texture_greens,
         texture_blues,
         accumulators,
-        camera_row,
+        row,
         viewport_columns,
         viewport_reds,
         viewport_greens,
