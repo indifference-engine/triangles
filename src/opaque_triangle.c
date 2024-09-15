@@ -1,16 +1,5 @@
 #include "opaque_triangle.h"
 
-static void copy_f32s(
-    const float *const source,
-    float *const destination,
-    const int quantity)
-{
-  for (int index = 0; index < quantity; index++)
-  {
-    destination[index] = source[index];
-  }
-}
-
 static void multiply_f32s_f32(
     const float *const multipliers,
     const float multiplicand,
@@ -134,13 +123,23 @@ static void row(
   {
     clamped_left_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
     clamped_right_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
-    copy_f32s(&row_accumulators[1], accumulators, 6);
+    accumulators[0] = row_accumulators[1];
+    accumulators[1] = row_accumulators[2];
+    accumulators[2] = row_accumulators[3];
+    accumulators[3] = row_accumulators[4];
+    accumulators[4] = row_accumulators[5];
+    accumulators[5] = row_accumulators[6];
   }
   else
   {
     clamped_left_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
     clamped_right_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
-    copy_f32s(&row_accumulators[8], accumulators, 6);
+    accumulators[0] = row_accumulators[8];
+    accumulators[1] = row_accumulators[9];
+    accumulators[2] = row_accumulators[10];
+    accumulators[3] = row_accumulators[11];
+    accumulators[4] = row_accumulators[12];
+    accumulators[5] = row_accumulators[13];
   }
 
   if (clamped_left_camera_column < 0)
@@ -282,8 +281,20 @@ void opaque_triangle(
   }
   else
   {
-    copy_f32s(&top[1], accumulators, 7);
-    copy_f32s(&top[1], &accumulators[7], 7);
+    accumulators[0] = top[1];
+    accumulators[1] = top[2];
+    accumulators[2] = top[3];
+    accumulators[3] = top[4];
+    accumulators[4] = top[5];
+    accumulators[5] = top[6];
+    accumulators[6] = top[7];
+    accumulators[7] = top[1];
+    accumulators[8] = top[2];
+    accumulators[9] = top[3];
+    accumulators[10] = top[4];
+    accumulators[11] = top[5];
+    accumulators[12] = top[6];
+    accumulators[13] = top[7];
   }
 
   const float middle_camera_row_float = middle[0];
@@ -333,7 +344,13 @@ void opaque_triangle(
   }
   else
   {
-    copy_f32s(&middle[1], &accumulators[7], 7);
+    accumulators[7] = middle[1];
+    accumulators[8] = middle[2];
+    accumulators[9] = middle[3];
+    accumulators[10] = middle[4];
+    accumulators[11] = middle[5];
+    accumulators[12] = middle[6];
+    accumulators[13] = middle[7];
   }
 
   const int bottom_camera_row = *bottom;
