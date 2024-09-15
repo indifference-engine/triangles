@@ -264,7 +264,7 @@ void opaque_triangle(
   per_rows[12] = deltas[14] * multiplicand_b;
   per_rows[13] = deltas[15] * multiplicand_b;
 
-  float accumulators[17];
+  float accumulators[14];
 
   const float top_row_float = top[0];
   const int top_row = top_row_float < 0 ? ((int)top_row_float) - 1 : top_row_float;
