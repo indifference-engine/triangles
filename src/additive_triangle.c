@@ -222,7 +222,7 @@ void additive_triangle(
     bottom = a;
   }
 
-  float deltas[18];
+  float deltas[16];
   deltas[0] = bottom[0] - top[0];
   deltas[1] = bottom[1] - top[1];
   deltas[2] = bottom[2] - top[2];
@@ -244,7 +244,7 @@ void additive_triangle(
   const float short_row_delta = deltas[8];
   const float multiplicand_b = 1.0f / short_row_delta;
 
-  float per_rows[17];
+  float per_rows[14];
   per_rows[0] = deltas[1] * multiplicand_a;
   per_rows[1] = deltas[2] * multiplicand_a;
   per_rows[2] = deltas[3] * multiplicand_a;
