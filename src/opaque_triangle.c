@@ -1,61 +1,5 @@
 #include "opaque_triangle.h"
 
-static void sort_top_to_bottom(
-    float *const vertices,
-    const int f32s_per_vertex,
-    const float **const top,
-    const float **const middle,
-    const float **const bottom)
-{
-  float *const a = vertices;
-  float *const b = &a[f32s_per_vertex];
-  float *const c = &b[f32s_per_vertex];
-
-  const float a_row = *a;
-  const float b_row = *b;
-  const float c_row = *c;
-
-  if (a_row <= b_row)
-  {
-    if (b_row <= c_row)
-    {
-      *top = a;
-      *middle = b;
-      *bottom = c;
-    }
-    else if (a_row <= c_row)
-    {
-      *top = a;
-      *middle = c;
-      *bottom = b;
-    }
-    else
-    {
-      *top = c;
-      *middle = a;
-      *bottom = b;
-    }
-  }
-  else if (a_row <= c_row)
-  {
-    *top = b;
-    *middle = a;
-    *bottom = c;
-  }
-  else if (b_row <= c_row)
-  {
-    *top = b;
-    *middle = c;
-    *bottom = a;
-  }
-  else
-  {
-    *top = c;
-    *middle = b;
-    *bottom = a;
-  }
-}
-
 static void row(
     const int texture_rows,
     const int texture_columns,
@@ -236,7 +180,49 @@ void opaque_triangle(
   const float *middle;
   const float *bottom;
 
-  sort_top_to_bottom(vertices, 8, &top, &middle, &bottom);
+  float *const a = vertices;
+  float *const b = &a[8];
+  float *const c = &b[8];
+
+  if (a_row <= b_row)
+  {
+    if (b_row <= c_row)
+    {
+      top = a;
+      middle = b;
+      bottom = c;
+    }
+    else if (a_row <= c_row)
+    {
+      top = a;
+      middle = c;
+      bottom = b;
+    }
+    else
+    {
+      top = c;
+      middle = a;
+      bottom = b;
+    }
+  }
+  else if (a_row <= c_row)
+  {
+    top = b;
+    middle = a;
+    bottom = c;
+  }
+  else if (b_row <= c_row)
+  {
+    top = b;
+    middle = c;
+    bottom = a;
+  }
+  else
+  {
+    top = c;
+    middle = b;
+    bottom = a;
+  }
 
   float deltas[18];
   deltas[0] = bottom[0] - top[0];
