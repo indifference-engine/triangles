@@ -1,10 +1,5 @@
 #include "opaque_triangle.h"
 
-static float floor(float x)
-{
-  return x < 0 ? ((int)x) - 1 : (int)x;
-}
-
 static void copy_f32s(
     const float *const source,
     float *const destination,
@@ -149,14 +144,14 @@ static void row(
 
   if (first_camera_column < second_camera_column)
   {
-    clamped_left_camera_column = floor(first_camera_column);
-    clamped_right_camera_column = floor(second_camera_column);
+    clamped_left_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
+    clamped_right_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
     copy_f32s(&row_accumulators[1], accumulators, 6);
   }
   else
   {
-    clamped_left_camera_column = floor(second_camera_column);
-    clamped_right_camera_column = floor(first_camera_column);
+    clamped_left_camera_column = second_camera_column < 0 ? ((int)second_camera_column) - 1 : second_camera_column;
+    clamped_right_camera_column = first_camera_column < 0 ? ((int)first_camera_column) - 1 : first_camera_column;
     copy_f32s(&row_accumulators[8], accumulators, 6);
   }
 
@@ -177,12 +172,13 @@ static void row(
 
     if (source_depth < viewport_depths[camera_index])
     {
-
-      const int texture_row = floor(texture_rows * accumulators[1]);
+      const float texture_row_float = texture_rows * accumulators[1];
+      const int texture_row = texture_row_float < 0 ? ((int)texture_row_float) - 1 : texture_row_float;
 
       const int wrapped_texture_row = texture_row >= 0 ? texture_row % texture_rows : texture_rows + ((texture_row + 1) % texture_rows) - 1;
 
-      const int texture_column = floor(texture_columns * accumulators[2]);
+      const float texture_column_float = texture_columns * accumulators[2];
+      const int texture_column = texture_column_float < 0 ? ((int)texture_column_float) - 1 : texture_column_float;
 
       const int wrapped_texture_column = texture_column >= 0 ? texture_column % texture_columns : texture_columns + ((texture_column + 1) % texture_columns) - 1;
 
@@ -281,7 +277,8 @@ void opaque_triangle(
 
   float accumulators[17];
 
-  const int top_camera_row = floor(top[0]);
+  const float top_camera_row_float = top[0];
+  const int top_camera_row = top_camera_row_float < 0 ? ((int)top_camera_row_float) - 1 : top_camera_row_float;
   const int clamped_top_camera_row = top_camera_row < 0 ? 0 : top_camera_row;
 
   if (top_camera_row < 0)
@@ -296,7 +293,8 @@ void opaque_triangle(
     copy_f32s(&top[1], &accumulators[7], 7);
   }
 
-  const int middle_camera_row = floor(middle[0]);
+  const float middle_camera_row_float = middle[0];
+  const int middle_camera_row = middle_camera_row_float < 0 ? ((int)middle_camera_row_float) - 1 : middle_camera_row_float;
   const int clamped_middle_camera_row = middle_camera_row < 0 ? 0 : (middle_camera_row > viewport_rows ? viewport_rows : middle_camera_row);
 
   for (int camera_row = clamped_top_camera_row; camera_row < clamped_middle_camera_row; camera_row++)
