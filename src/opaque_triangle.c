@@ -1,18 +1,5 @@
 #include "opaque_triangle.h"
 
-static void multiply_add_f32s_f32_f32s(
-    const float *const multipliers,
-    const float multiplicand,
-    const float *const addends,
-    float *const results,
-    const int quantity)
-{
-  for (int index = 0; index < quantity; index++)
-  {
-    results[index] = multipliers[index] * multiplicand + addends[index];
-  }
-}
-
 static void sort_top_to_bottom(
     float *const vertices,
     const int f32s_per_vertex,
@@ -132,7 +119,12 @@ static void row(
 
   if (clamped_left_camera_column < 0)
   {
-    multiply_add_f32s_f32_f32s(per_columns, -clamped_left_camera_column, accumulators, accumulators, 5);
+    const float negated_clamp_left_camera_column = -clamped_left_camera_column;
+    accumulators[0] += per_columns[0] * negated_clamp_left_camera_column;
+    accumulators[1] += per_columns[1] * negated_clamp_left_camera_column;
+    accumulators[2] += per_columns[2] * negated_clamp_left_camera_column;
+    accumulators[3] += per_columns[3] * negated_clamp_left_camera_column;
+    accumulators[4] += per_columns[4] * negated_clamp_left_camera_column;
     clamped_left_camera_column = 0;
   }
 
@@ -293,8 +285,20 @@ void opaque_triangle(
   if (top_camera_row < 0)
   {
     const float skipped_rows = -top_camera_row;
-    multiply_add_f32s_f32_f32s(per_rows, skipped_rows, &top[1], accumulators, 7);
-    multiply_add_f32s_f32_f32s(&per_rows[7], skipped_rows, &top[1], &accumulators[7], 7);
+    accumulators[0] = per_rows[0] * skipped_rows + top[1];
+    accumulators[1] = per_rows[1] * skipped_rows + top[2];
+    accumulators[2] = per_rows[2] * skipped_rows + top[3];
+    accumulators[3] = per_rows[3] * skipped_rows + top[4];
+    accumulators[4] = per_rows[4] * skipped_rows + top[5];
+    accumulators[5] = per_rows[5] * skipped_rows + top[6];
+    accumulators[6] = per_rows[6] * skipped_rows + top[7];
+    accumulators[7] = per_rows[7] * skipped_rows + top[1];
+    accumulators[8] = per_rows[8] * skipped_rows + top[2];
+    accumulators[9] = per_rows[9] * skipped_rows + top[3];
+    accumulators[10] = per_rows[10] * skipped_rows + top[4];
+    accumulators[11] = per_rows[11] * skipped_rows + top[5];
+    accumulators[12] = per_rows[12] * skipped_rows + top[6];
+    accumulators[13] = per_rows[13] * skipped_rows + top[7];
   }
   else
   {
@@ -372,7 +376,14 @@ void opaque_triangle(
   if (middle_camera_row < 0)
   {
     const float skipped_rows = -middle_camera_row;
-    multiply_add_f32s_f32_f32s(&per_rows[7], skipped_rows, &middle[1], &accumulators[7], 7);
+
+    accumulators[7] = per_rows[7] * skipped_rows + middle[1];
+    accumulators[8] = per_rows[8] * skipped_rows + middle[2];
+    accumulators[9] = per_rows[9] * skipped_rows + middle[3];
+    accumulators[10] = per_rows[10] * skipped_rows + middle[4];
+    accumulators[11] = per_rows[11] * skipped_rows + middle[5];
+    accumulators[12] = per_rows[12] * skipped_rows + middle[6];
+    accumulators[13] = per_rows[13] * skipped_rows + middle[7];
   }
   else
   {
