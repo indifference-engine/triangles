@@ -166,84 +166,192 @@ void cutout_triangle(
     float *const viewport_blues,
     float *const viewport_depths)
 {
-  const float a[9] = {
-      a_row,     // 0
-      a_column,  // 1
-      a_depth,   // 2
-      a_v,       // 3
-      a_u,       // 4
-      a_opacity, // 5
-      a_red,     // 6
-      a_green,   // 7
-      a_blue,    // 8
-  };
-
-  const float b[9] = {
-      b_row,     // 0
-      b_column,  // 1
-      b_depth,   // 2
-      b_v,       // 3
-      b_u,       // 4
-      b_opacity, // 5
-      b_red,     // 6
-      b_green,   // 7
-      b_blue,    // 8
-  };
-
-  const float c[9] = {
-      c_row,     // 0
-      c_column,  // 1
-      c_depth,   // 2
-      c_v,       // 3
-      c_u,       // 4
-      c_opacity, // 5
-      c_red,     // 6
-      c_green,   // 7
-      c_blue,    // 8
-  };
-
-  const float *top;
-  const float *middle;
-  const float *bottom;
+  float top[9];
+  float middle[9];
+  float bottom[9];
 
   if (a_row <= b_row)
   {
     if (b_row <= c_row)
     {
-      top = a;
-      middle = b;
-      bottom = c;
+      top[0] = a_row;
+      top[1] = a_column;
+      top[2] = a_depth;
+      top[3] = a_v;
+      top[4] = a_u;
+      top[5] = a_opacity;
+      top[6] = a_red;
+      top[7] = a_green;
+      top[8] = a_blue;
+      middle[0] = b_row;
+      middle[1] = b_column;
+      middle[2] = b_depth;
+      middle[3] = b_v;
+      middle[4] = b_u;
+      middle[5] = b_opacity;
+      middle[6] = b_red;
+      middle[7] = b_green;
+      middle[8] = b_blue;
+      bottom[0] = c_row;
+      bottom[1] = c_column;
+      bottom[2] = c_depth;
+      bottom[3] = c_v;
+      bottom[4] = c_u;
+      bottom[5] = c_opacity;
+      bottom[6] = c_red;
+      bottom[7] = c_green;
+      bottom[8] = c_blue;
     }
     else if (a_row <= c_row)
     {
-      top = a;
-      middle = c;
-      bottom = b;
+      top[0] = a_row;
+      top[1] = a_column;
+      top[2] = a_depth;
+      top[3] = a_v;
+      top[4] = a_u;
+      top[5] = a_opacity;
+      top[6] = a_red;
+      top[7] = a_green;
+      top[8] = a_blue;
+      middle[0] = c_row;
+      middle[1] = c_column;
+      middle[2] = c_depth;
+      middle[3] = c_v;
+      middle[4] = c_u;
+      middle[5] = c_opacity;
+      middle[6] = c_red;
+      middle[7] = c_green;
+      middle[8] = c_blue;
+      bottom[0] = b_row;
+      bottom[1] = b_column;
+      bottom[2] = b_depth;
+      bottom[3] = b_v;
+      bottom[4] = b_u;
+      bottom[5] = b_opacity;
+      bottom[6] = b_red;
+      bottom[7] = b_green;
+      bottom[8] = b_blue;
     }
     else
     {
-      top = c;
-      middle = a;
-      bottom = b;
+      top[0] = c_row;
+      top[1] = c_column;
+      top[2] = c_depth;
+      top[3] = c_v;
+      top[4] = c_u;
+      top[5] = c_opacity;
+      top[6] = c_red;
+      top[7] = c_green;
+      top[8] = c_blue;
+      middle[0] = a_row;
+      middle[1] = a_column;
+      middle[2] = a_depth;
+      middle[3] = a_v;
+      middle[4] = a_u;
+      middle[5] = a_opacity;
+      middle[6] = a_red;
+      middle[7] = a_green;
+      middle[8] = a_blue;
+      bottom[0] = b_row;
+      bottom[1] = b_column;
+      bottom[2] = b_depth;
+      bottom[3] = b_v;
+      bottom[4] = b_u;
+      bottom[5] = b_opacity;
+      bottom[6] = b_red;
+      bottom[7] = b_green;
+      bottom[8] = b_blue;
     }
   }
   else if (a_row <= c_row)
   {
-    top = b;
-    middle = a;
-    bottom = c;
+    top[0] = b_row;
+    top[1] = b_column;
+    top[2] = b_depth;
+    top[3] = b_v;
+    top[4] = b_u;
+    top[5] = b_opacity;
+    top[6] = b_red;
+    top[7] = b_green;
+    top[8] = b_blue;
+    middle[0] = a_row;
+    middle[1] = a_column;
+    middle[2] = a_depth;
+    middle[3] = a_v;
+    middle[4] = a_u;
+    middle[5] = a_opacity;
+    middle[6] = a_red;
+    middle[7] = a_green;
+    middle[8] = a_blue;
+    bottom[0] = c_row;
+    bottom[1] = c_column;
+    bottom[2] = c_depth;
+    bottom[3] = c_v;
+    bottom[4] = c_u;
+    bottom[5] = c_opacity;
+    bottom[6] = c_red;
+    bottom[7] = c_green;
+    bottom[8] = c_blue;
   }
   else if (b_row <= c_row)
   {
-    top = b;
-    middle = c;
-    bottom = a;
+    top[0] = b_row;
+    top[1] = b_column;
+    top[2] = b_depth;
+    top[3] = b_v;
+    top[4] = b_u;
+    top[5] = b_opacity;
+    top[6] = b_red;
+    top[7] = b_green;
+    top[8] = b_blue;
+    middle[0] = c_row;
+    middle[1] = c_column;
+    middle[2] = c_depth;
+    middle[3] = c_v;
+    middle[4] = c_u;
+    middle[5] = c_opacity;
+    middle[6] = c_red;
+    middle[7] = c_green;
+    middle[8] = c_blue;
+    bottom[0] = a_row;
+    bottom[1] = a_column;
+    bottom[2] = a_depth;
+    bottom[3] = a_v;
+    bottom[4] = a_u;
+    bottom[5] = a_opacity;
+    bottom[6] = a_red;
+    bottom[7] = a_green;
+    bottom[8] = a_blue;
   }
   else
   {
-    top = c;
-    middle = b;
-    bottom = a;
+    top[0] = c_row;
+    top[1] = c_column;
+    top[2] = c_depth;
+    top[3] = c_v;
+    top[4] = c_u;
+    top[5] = c_opacity;
+    top[6] = c_red;
+    top[7] = c_green;
+    top[8] = c_blue;
+    middle[0] = b_row;
+    middle[1] = b_column;
+    middle[2] = b_depth;
+    middle[3] = b_v;
+    middle[4] = b_u;
+    middle[5] = b_opacity;
+    middle[6] = b_red;
+    middle[7] = b_green;
+    middle[8] = b_blue;
+    bottom[0] = a_row;
+    bottom[1] = a_column;
+    bottom[2] = a_depth;
+    bottom[3] = a_v;
+    bottom[4] = a_u;
+    bottom[5] = a_opacity;
+    bottom[6] = a_red;
+    bottom[7] = a_green;
+    bottom[8] = a_blue;
   }
 
   float deltas[18];
