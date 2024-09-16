@@ -50,15 +50,21 @@ corresponding function available.
 
 ### Blend Modes
 
-| Blend Mode | Color                                           | Opacity             | Depth        |
-| ---------- | ----------------------------------------------- | ------------------- | ------------ |
-| Opaque     | Overwritten without mixing with existing color. | Overwritten with 1. | Overwritten. |
+| Blend Mode | Color                                           | Opacity                          | Depth                     |
+| ---------- | ----------------------------------------------- | -------------------------------- | ------------------------- |
+| Opaque     | Overwritten.                                    | Overwritten with 1.              | Overwritten.              |
+| Cutout     | Overwritten or unchanged.                       | Overwritten with 1 or unchanged. | Overwritten or unchanged. |
+| Additive   | Summed ("linear dodge").                        | Unchanged.                       | Unchanged.                |
+| Blended    | Mixed using opacity.                            | Mixed with opacity.              | Unchanged.                |
 
 ### Functions
 
 | Name            | Blend Mode |
 | --------------- | ---------- |
 | `opaque_line`   | Opaque     |
+| `cutout_line`   | Cutout     |
+| `additive_line` | Additive   |
+| `blended_line`  | Blended    |
 
 ## Tests
 
