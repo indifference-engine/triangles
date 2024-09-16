@@ -69,6 +69,7 @@ static void opaque_row(
     accumulators[2] += per_columns[2] * negated_clamp_left_column;
     accumulators[3] += per_columns[3] * negated_clamp_left_column;
     accumulators[4] += per_columns[4] * negated_clamp_left_column;
+    accumulators[5] += per_columns[5] * negated_clamp_left_column;
     clamped_left_column = 0;
   }
 
