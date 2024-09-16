@@ -9,10 +9,10 @@ static void opaque_row(
     const float row_accumulators[14],
     const int row,
     const int viewport_columns,
+    float *const viewport_opacities,
     float *const viewport_reds,
     float *const viewport_greens,
     float *const viewport_blues,
-    float *const viewport_opacities,
     float *const viewport_depths)
 {
   float per_columns[6];
@@ -144,10 +144,10 @@ void opaque_triangle(
     const float c_depth,
     const int viewport_rows,
     const int viewport_columns,
+    float *const viewport_opacities,
     float *const viewport_reds,
     float *const viewport_greens,
     float *const viewport_blues,
-    float *const viewport_opacities,
     float *const viewport_depths)
 {
   const float a[8] = {
@@ -322,10 +322,10 @@ void opaque_triangle(
         accumulators,
         row,
         viewport_columns,
+        viewport_opacities,
         viewport_reds,
         viewport_greens,
         viewport_blues,
-        viewport_opacities,
         viewport_depths);
 
     accumulators[0] += per_rows[0];
@@ -399,10 +399,10 @@ void opaque_triangle(
         accumulators,
         row,
         viewport_columns,
+        viewport_opacities,
         viewport_reds,
         viewport_greens,
         viewport_blues,
-        viewport_opacities,
         viewport_depths);
 
     accumulators[0] += per_rows[0];
