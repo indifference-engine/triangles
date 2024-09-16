@@ -1,4 +1,4 @@
-# Lines
+# Triangles
 
 C library to draw triangles.
 
