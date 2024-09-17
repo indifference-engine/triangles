@@ -59,12 +59,12 @@ corresponding function available.
 
 ### Functions
 
-| Name            | Blend Mode |
-| --------------- | ---------- |
-| `opaque_line`   | Opaque     |
-| `cutout_line`   | Cutout     |
-| `additive_line` | Additive   |
-| `blended_line`  | Blended    |
+| Name                | Blend Mode |
+| ------------------- | ---------- |
+| `opaque_triangle`   | Opaque     |
+| `cutout_triangle`   | Cutout     |
+| `additive_triangle` | Additive   |
+| `blended_triangle`  | Blended    |
 
 ## Tests
 
