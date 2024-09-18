@@ -26,7 +26,11 @@ float *read_file(const char *const name, const int rows, const int columns)
     exit(1);
   }
 
-  fclose(file);
+  if (fclose(file) != 0)
+  {
+    fprintf(stderr, "Failed to close file \"%s\".\n", name);
+    exit(1);
+  }
 
   float *const output = malloc(sizeof(float) * 192 * 256);
 
@@ -87,7 +91,11 @@ void write_file(const float *const buffer, const char *const name, const int row
     exit(1);
   }
 
-  fclose(file);
+  if (fclose(file) != 0)
+  {
+    fprintf(stderr, "Failed to close file \"%s\".\n", name);
+    exit(1);
+  }
 
   free(temp);
 }
