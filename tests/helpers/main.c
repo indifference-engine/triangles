@@ -62,19 +62,45 @@ void write_file(const float *const buffer, const char *const name, const int row
 
   for (int i = 0; i < rows * columns; i++)
   {
-    float value = buffer[i] * 255.0f;
+    const float float_value = buffer[i];
 
-    if (value < 0.0f)
+    if (float_value != float_value)
     {
-      value = 0.0f;
+      temp[i] = 47;
     }
-
-    if (value > 255.0f)
+    else if (float_value == 1.0f / 0.0f)
     {
-      value = 255.0f;
+      temp[i] = 48;
     }
+    else if (float_value == -1.0f / 0.0f)
+    {
+      temp[i] = 49;
+    }
+    else if (float_value > 1.0f)
+    {
+      temp[i] = 50;
+    }
+    else if (float_value < 0.0f)
+    {
+      temp[i] = 51;
+    }
+    else
+    {
+      const int int_value = float_value * 255.0f;
 
-    temp[i] = value;
+      if (int_value < 0)
+      {
+        temp[i] = 0;
+      }
+      else if (int_value > 255)
+      {
+        temp[i] = 255;
+      }
+      else
+      {
+        temp[i] = int_value;
+      }
+    }
   }
 
   FILE *file = fopen(name, "wb");
