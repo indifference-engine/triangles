@@ -17,7 +17,7 @@ O_FILES = $(sort $(patsubst %.c,obj/%.o,$(C_FILES)))
 TOTAL_REBUILD_FILES = makefile $(H_FILES)
 EXPECTED_OUTPUTS = $(sort $(foreach S,$(shell bash -c "find tests/cases -mindepth 5 -maxdepth 5 -type f -iname ""*.data"""),$(if $(findstring /expected/,$S),$S)))
 
-test: $(subst /expected/,/actual/,$(EXPECTED_OUTPUTS))
+test: $(patsubst %.data,%.hex,$(addprefix tests/pass_markers/,$(subst /expected/,/actual/,$(EXPECTED_OUTPUTS))))
 
 dist/%: tests/cases/%/main.c $(O_FILES)
 	mkdir -p $(dir $@)
@@ -42,8 +42,8 @@ tests/cases/%/outputs/actual/texture/blues.data: dist/%;
 tests/cases/%.hex: tests/cases/%.data
 	xxd $< > $@
 
-tests/pass_markers/%: %
-	diff $* $(subst /actual/,/expected/$*)
+tests/pass_markers/%: % $(patsubst %.data,%.hex,$(EXPECTED_OUTPUTS))
+	diff $* $(subst /actual/,/expected/,$*)
 
 clean:
 	rm -rf obj dist $(patsubst %, tests/cases/%/outputs/actual, $(TESTS)) tests/pass_markers
