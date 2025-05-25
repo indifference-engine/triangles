@@ -11,11 +11,11 @@ CFLAGS = -Wall -Wextra -Werror -std=c99 -nostdlib -ffreestanding -O3 -pedantic -
 # specify bash.  You also can't use a variable for this (e.g. $(SHELL)) as make
 # inexplicably tries to read something from the PATH and fails.  So hardcoding a
 # reference to bash seems to be the only way to get a working build.
-C_FILES = $(shell bash -c "find src -type f -iname ""*.c""") $(shell bash -c "find tests/helpers -type f -iname ""*.c""")
-H_FILES = $(shell bash -c "find src -type f -iname ""*.h""") $(shell bash -c "find tests/helpers -type f -iname ""*.h""")
-O_FILES = $(patsubst %.c,obj/%.o,$(C_FILES))
+C_FILES = $(sort $(shell bash -c "find src -type f -iname ""*.c""") $(shell bash -c "find tests/helpers -type f -iname ""*.c"""))
+H_FILES = $(sort $(shell bash -c "find src -type f -iname ""*.h""") $(shell bash -c "find tests/helpers -type f -iname ""*.h"""))
+O_FILES = $(sort $(patsubst %.c,obj/%.o,$(C_FILES)))
 TOTAL_REBUILD_FILES = makefile $(H_FILES)
-EXPECTED_OUTPUTS = $(foreach S,$(shell bash -c "find tests/cases -mindepth 5 -maxdepth 5 -type f -iname ""*.data"""),$(if $(findstring /expected/,$S),$S))
+EXPECTED_OUTPUTS = $(sort $(foreach S,$(shell bash -c "find tests/cases -mindepth 5 -maxdepth 5 -type f -iname ""*.data"""),$(if $(findstring /expected/,$S),$S)))
 
 test: $(subst /expected/,/actual/,$(EXPECTED_OUTPUTS))
 
