@@ -1,6 +1,6 @@
 # Triangles
 
-C library to draw triangles.
+C library to draw and sample triangles.
 
 ## Usage
 
@@ -57,14 +57,22 @@ corresponding function available.
 | Additive   | Summed ("linear dodge").                        | Unchanged.                       | Unchanged.                |
 | Blended    | Mixed using opacity.                            | Mixed with opacity.              | Unchanged.                |
 
+### Function Types
+
+| Type         | Description                                                                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Draw         | Rasterizes the described triangle to a viewport.                                                                                          |
+| Depth Sample | Samples the depth of the described triangle at a given row/column of a viewport.  Positive infinity in areas not covered by the triangle. |
+
 ### Functions
 
-| Name                | Blend Mode |
-| ------------------- | ---------- |
-| `opaque_triangle`   | Opaque     |
-| `cutout_triangle`   | Cutout     |
-| `additive_triangle` | Additive   |
-| `blended_triangle`  | Blended    |
+| Name                    | Type         | Blend Mode |
+| ----------------------- | ------------ | ---------- |
+| `opaque_triangle`       | Draw         | Opaque     |
+| `cutout_triangle`       | Draw         | Cutout     |
+| `additive_triangle`     | Draw         | Additive   |
+| `blended_triangle`      | Draw         | Blended    |
+| `cutout_triangle_depth` | Depth Sample | Cutout     |
 
 ## Tests
 
