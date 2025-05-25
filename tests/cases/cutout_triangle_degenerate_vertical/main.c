@@ -6,10 +6,10 @@ int main(int argc, char **argv)
   (void)(argc);
   (void)(argv);
 
-  float *const texture_opacities = read_file("inputs/viewport/opacities.data", 10, 8);
-  float *const texture_reds = read_file("inputs/viewport/reds.data", 10, 8);
-  float *const texture_greens = read_file("inputs/viewport/greens.data", 10, 8);
-  float *const texture_blues = read_file("inputs/viewport/blues.data", 10, 8);
+  float *const texture_opacities = read_file("inputs/texture/opacities.data", 10, 8);
+  float *const texture_reds = read_file("inputs/texture/reds.data", 10, 8);
+  float *const texture_greens = read_file("inputs/texture/greens.data", 10, 8);
+  float *const texture_blues = read_file("inputs/texture/blues.data", 10, 8);
 
   float *const viewport_opacities = read_file("inputs/viewport/opacities.data", 192, 256);
   float *const viewport_reds = read_file("inputs/viewport/reds.data", 192, 256);
