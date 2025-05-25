@@ -72,6 +72,7 @@ corresponding function available.
 | `cutout_triangle`       | Draw         | Cutout     |
 | `additive_triangle`     | Draw         | Additive   |
 | `blended_triangle`      | Draw         | Blended    |
+| `opaque_triangle_depth` | Depth Sample | Opaque     |
 | `cutout_triangle_depth` | Depth Sample | Cutout     |
 
 ## Tests
