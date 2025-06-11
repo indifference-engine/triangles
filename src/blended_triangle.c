@@ -1,21 +1,14 @@
 #include "blended_triangle.h"
 
-static void blended_row(
-    const int texture_rows,
-    const int texture_columns,
-    const float *const texture_opacities,
-    const float *const texture_reds,
-    const float *const texture_greens,
-    const float *const texture_blues,
-    const float row_accumulators[16],
-    const int row,
-    const int viewport_columns,
-    float *const viewport_opacities,
-    float *const viewport_reds,
-    float *const viewport_greens,
-    float *const viewport_blues,
-    const float *const viewport_depths)
-{
+static void
+blended_row(const int texture_rows, const int texture_columns,
+            const float *const texture_opacities,
+            const float *const texture_reds, const float *const texture_greens,
+            const float *const texture_blues, const float row_accumulators[16],
+            const int row, const int viewport_columns,
+            float *const viewport_opacities, float *const viewport_reds,
+            float *const viewport_greens, float *const viewport_blues,
+            const float *const viewport_depths) {
   float per_columns[7];
   float accumulators[7];
 
@@ -41,10 +34,11 @@ static void blended_row(
 
   int clamped_left_column, clamped_right_column;
 
-  if (first_column < second_column)
-  {
-    clamped_left_column = first_column < 0 ? ((int)first_column) - 1 : first_column;
-    clamped_right_column = second_column < 0 ? ((int)second_column) - 1 : second_column;
+  if (first_column < second_column) {
+    clamped_left_column =
+        first_column < 0 ? ((int)first_column) - 1 : first_column;
+    clamped_right_column =
+        second_column < 0 ? ((int)second_column) - 1 : second_column;
     accumulators[0] = row_accumulators[1];
     accumulators[1] = row_accumulators[2];
     accumulators[2] = row_accumulators[3];
@@ -52,11 +46,11 @@ static void blended_row(
     accumulators[4] = row_accumulators[5];
     accumulators[5] = row_accumulators[6];
     accumulators[6] = row_accumulators[7];
-  }
-  else
-  {
-    clamped_left_column = second_column < 0 ? ((int)second_column) - 1 : second_column;
-    clamped_right_column = first_column < 0 ? ((int)first_column) - 1 : first_column;
+  } else {
+    clamped_left_column =
+        second_column < 0 ? ((int)second_column) - 1 : second_column;
+    clamped_right_column =
+        first_column < 0 ? ((int)first_column) - 1 : first_column;
     accumulators[0] = row_accumulators[9];
     accumulators[1] = row_accumulators[10];
     accumulators[2] = row_accumulators[11];
@@ -66,8 +60,7 @@ static void blended_row(
     accumulators[6] = row_accumulators[15];
   }
 
-  if (clamped_left_column < 0)
-  {
+  if (clamped_left_column < 0) {
     const float negated_clamp_left_column = -clamped_left_column;
     accumulators[0] += per_columns[0] * negated_clamp_left_column;
     accumulators[1] += per_columns[1] * negated_clamp_left_column;
@@ -79,35 +72,55 @@ static void blended_row(
     clamped_left_column = 0;
   }
 
-  clamped_right_column = clamped_right_column < viewport_columns ? clamped_right_column : viewport_columns;
+  clamped_right_column = clamped_right_column < viewport_columns
+                             ? clamped_right_column
+                             : viewport_columns;
 
   const int left_index = row * viewport_columns + clamped_left_column;
-  const int right_index = left_index + clamped_right_column - clamped_left_column;
+  const int right_index =
+      left_index + clamped_right_column - clamped_left_column;
 
-  for (int viewport_index = left_index; viewport_index < right_index; viewport_index++)
-  {
+  for (int viewport_index = left_index; viewport_index < right_index;
+       viewport_index++) {
     const float source_depth = accumulators[0];
 
-    if (source_depth < viewport_depths[viewport_index])
-    {
+    if (source_depth < viewport_depths[viewport_index]) {
       const float texture_row_float = texture_rows * accumulators[1];
-      const int texture_row = texture_row_float < 0 ? ((int)texture_row_float) - 1 : texture_row_float;
+      const int texture_row = texture_row_float < 0
+                                  ? ((int)texture_row_float) - 1
+                                  : texture_row_float;
 
-      const int wrapped_texture_row = texture_row >= 0 ? texture_row % texture_rows : texture_rows + ((texture_row + 1) % texture_rows) - 1;
+      const int wrapped_texture_row =
+          texture_row >= 0
+              ? texture_row % texture_rows
+              : texture_rows + ((texture_row + 1) % texture_rows) - 1;
 
       const float texture_column_float = texture_columns * accumulators[2];
-      const int texture_column = texture_column_float < 0 ? ((int)texture_column_float) - 1 : texture_column_float;
+      const int texture_column = texture_column_float < 0
+                                     ? ((int)texture_column_float) - 1
+                                     : texture_column_float;
 
-      const int wrapped_texture_column = texture_column >= 0 ? texture_column % texture_columns : texture_columns + ((texture_column + 1) % texture_columns) - 1;
+      const int wrapped_texture_column =
+          texture_column >= 0
+              ? texture_column % texture_columns
+              : texture_columns + ((texture_column + 1) % texture_columns) - 1;
 
-      const int texture_index = wrapped_texture_row * texture_columns + wrapped_texture_column;
+      const int texture_index =
+          wrapped_texture_row * texture_columns + wrapped_texture_column;
 
       const float opacity = accumulators[3] * texture_opacities[texture_index];
       const float inverse_opacity = 1.0f - opacity;
-      viewport_opacities[viewport_index] = 1.0f - (1.0f - viewport_opacities[viewport_index]) * inverse_opacity;
-      viewport_reds[viewport_index] = viewport_reds[viewport_index] * inverse_opacity + accumulators[4] * texture_reds[texture_index] * opacity;
-      viewport_greens[viewport_index] = viewport_greens[viewport_index] * inverse_opacity + accumulators[5] * texture_greens[texture_index] * opacity;
-      viewport_blues[viewport_index] = viewport_blues[viewport_index] * inverse_opacity + accumulators[6] * texture_blues[texture_index] * opacity;
+      viewport_opacities[viewport_index] =
+          1.0f - (1.0f - viewport_opacities[viewport_index]) * inverse_opacity;
+      viewport_reds[viewport_index] =
+          viewport_reds[viewport_index] * inverse_opacity +
+          accumulators[4] * texture_reds[texture_index] * opacity;
+      viewport_greens[viewport_index] =
+          viewport_greens[viewport_index] * inverse_opacity +
+          accumulators[5] * texture_greens[texture_index] * opacity;
+      viewport_blues[viewport_index] =
+          viewport_blues[viewport_index] * inverse_opacity +
+          accumulators[6] * texture_blues[texture_index] * opacity;
     }
 
     accumulators[0] += per_columns[0];
@@ -121,55 +134,27 @@ static void blended_row(
 }
 
 void blended_triangle(
-    const int texture_rows,
-    const int texture_columns,
-    const float *const texture_opacities,
-    const float *const texture_reds,
-    const float *const texture_greens,
-    const float *const texture_blues,
-    const float a_v,
-    const float a_u,
-    const float a_opacity,
-    const float a_red,
-    const float a_green,
-    const float a_blue,
-    const float a_row,
-    const float a_column,
-    const float a_depth,
-    const float b_v,
-    const float b_u,
-    const float b_opacity,
-    const float b_red,
-    const float b_green,
-    const float b_blue,
-    const float b_row,
-    const float b_column,
-    const float b_depth,
-    const float c_v,
-    const float c_u,
-    const float c_opacity,
-    const float c_red,
-    const float c_green,
-    const float c_blue,
-    const float c_row,
-    const float c_column,
-    const float c_depth,
-    const int viewport_rows,
-    const int viewport_columns,
-    float *const viewport_opacities,
-    float *const viewport_reds,
-    float *const viewport_greens,
-    float *const viewport_blues,
-    float *const viewport_depths)
-{
+    const int texture_rows, const int texture_columns,
+    const float *const texture_opacities, const float *const texture_reds,
+    const float *const texture_greens, const float *const texture_blues,
+    const float a_v, const float a_u, const float a_opacity, const float a_red,
+    const float a_green, const float a_blue, const float a_row,
+    const float a_column, const float a_depth, const float b_v, const float b_u,
+    const float b_opacity, const float b_red, const float b_green,
+    const float b_blue, const float b_row, const float b_column,
+    const float b_depth, const float c_v, const float c_u,
+    const float c_opacity, const float c_red, const float c_green,
+    const float c_blue, const float c_row, const float c_column,
+    const float c_depth, const int viewport_rows, const int viewport_columns,
+    float *const viewport_opacities, float *const viewport_reds,
+    float *const viewport_greens, float *const viewport_blues,
+    float *const viewport_depths) {
   float top[9];
   float middle[9];
   float bottom[9];
 
-  if (a_row <= b_row)
-  {
-    if (b_row <= c_row)
-    {
+  if (a_row <= b_row) {
+    if (b_row <= c_row) {
       top[0] = a_row;
       top[1] = a_column;
       top[2] = a_depth;
@@ -197,9 +182,7 @@ void blended_triangle(
       bottom[6] = c_red;
       bottom[7] = c_green;
       bottom[8] = c_blue;
-    }
-    else if (a_row <= c_row)
-    {
+    } else if (a_row <= c_row) {
       top[0] = a_row;
       top[1] = a_column;
       top[2] = a_depth;
@@ -227,9 +210,7 @@ void blended_triangle(
       bottom[6] = b_red;
       bottom[7] = b_green;
       bottom[8] = b_blue;
-    }
-    else
-    {
+    } else {
       top[0] = c_row;
       top[1] = c_column;
       top[2] = c_depth;
@@ -258,9 +239,7 @@ void blended_triangle(
       bottom[7] = b_green;
       bottom[8] = b_blue;
     }
-  }
-  else if (a_row <= c_row)
-  {
+  } else if (a_row <= c_row) {
     top[0] = b_row;
     top[1] = b_column;
     top[2] = b_depth;
@@ -288,9 +267,7 @@ void blended_triangle(
     bottom[6] = c_red;
     bottom[7] = c_green;
     bottom[8] = c_blue;
-  }
-  else if (b_row <= c_row)
-  {
+  } else if (b_row <= c_row) {
     top[0] = b_row;
     top[1] = b_column;
     top[2] = b_depth;
@@ -318,9 +295,7 @@ void blended_triangle(
     bottom[6] = a_red;
     bottom[7] = a_green;
     bottom[8] = a_blue;
-  }
-  else
-  {
+  } else {
     top[0] = c_row;
     top[1] = c_column;
     top[2] = c_depth;
@@ -395,11 +370,11 @@ void blended_triangle(
   float accumulators[16];
 
   const float top_row_float = top[0];
-  const int top_row = top_row_float < 0 ? ((int)top_row_float) - 1 : top_row_float;
+  const int top_row =
+      top_row_float < 0 ? ((int)top_row_float) - 1 : top_row_float;
   const int clamped_top_row = top_row < 0 ? 0 : top_row;
 
-  if (top_row < 0)
-  {
+  if (top_row < 0) {
     const float skipped_rows = -top_row;
     accumulators[0] = per_rows[0] * skipped_rows + top[1];
     accumulators[1] = per_rows[1] * skipped_rows + top[2];
@@ -417,9 +392,7 @@ void blended_triangle(
     accumulators[13] = per_rows[13] * skipped_rows + top[6];
     accumulators[14] = per_rows[14] * skipped_rows + top[7];
     accumulators[15] = per_rows[15] * skipped_rows + top[8];
-  }
-  else
-  {
+  } else {
     accumulators[0] = top[1];
     accumulators[1] = top[2];
     accumulators[2] = top[3];
@@ -439,26 +412,18 @@ void blended_triangle(
   }
 
   const float middle_row_float = middle[0];
-  const int middle_row = middle_row_float < 0 ? ((int)middle_row_float) - 1 : middle_row_float;
-  const int clamped_middle_row = middle_row < 0 ? 0 : (middle_row > viewport_rows ? viewport_rows : middle_row);
+  const int middle_row =
+      middle_row_float < 0 ? ((int)middle_row_float) - 1 : middle_row_float;
+  const int clamped_middle_row =
+      middle_row < 0
+          ? 0
+          : (middle_row > viewport_rows ? viewport_rows : middle_row);
 
-  for (int row = clamped_top_row; row < clamped_middle_row; row++)
-  {
-    blended_row(
-        texture_rows,
-        texture_columns,
-        texture_opacities,
-        texture_reds,
-        texture_greens,
-        texture_blues,
-        accumulators,
-        row,
-        viewport_columns,
-        viewport_opacities,
-        viewport_reds,
-        viewport_greens,
-        viewport_blues,
-        viewport_depths);
+  for (int row = clamped_top_row; row < clamped_middle_row; row++) {
+    blended_row(texture_rows, texture_columns, texture_opacities, texture_reds,
+                texture_greens, texture_blues, accumulators, row,
+                viewport_columns, viewport_opacities, viewport_reds,
+                viewport_greens, viewport_blues, viewport_depths);
 
     accumulators[0] += per_rows[0];
     accumulators[1] += per_rows[1];
@@ -498,8 +463,7 @@ void blended_triangle(
   per_rows[14] = deltas[7] * multiplicand_c;
   per_rows[15] = deltas[8] * multiplicand_c;
 
-  if (middle_row < 0)
-  {
+  if (middle_row < 0) {
     const float skipped_rows = -middle_row;
 
     accumulators[8] = per_rows[8] * skipped_rows + middle[1];
@@ -510,9 +474,7 @@ void blended_triangle(
     accumulators[13] = per_rows[13] * skipped_rows + middle[6];
     accumulators[14] = per_rows[14] * skipped_rows + middle[7];
     accumulators[15] = per_rows[15] * skipped_rows + middle[8];
-  }
-  else
-  {
+  } else {
     accumulators[8] = middle[1];
     accumulators[9] = middle[2];
     accumulators[10] = middle[3];
@@ -524,25 +486,14 @@ void blended_triangle(
   }
 
   const int bottom_row = *bottom;
-  const int clamped_bottom_row = viewport_rows < bottom_row ? viewport_rows : bottom_row;
+  const int clamped_bottom_row =
+      viewport_rows < bottom_row ? viewport_rows : bottom_row;
 
-  for (int row = clamped_middle_row; row < clamped_bottom_row; row++)
-  {
-    blended_row(
-        texture_rows,
-        texture_columns,
-        texture_opacities,
-        texture_reds,
-        texture_greens,
-        texture_blues,
-        accumulators,
-        row,
-        viewport_columns,
-        viewport_opacities,
-        viewport_reds,
-        viewport_greens,
-        viewport_blues,
-        viewport_depths);
+  for (int row = clamped_middle_row; row < clamped_bottom_row; row++) {
+    blended_row(texture_rows, texture_columns, texture_opacities, texture_reds,
+                texture_greens, texture_blues, accumulators, row,
+                viewport_columns, viewport_opacities, viewport_reds,
+                viewport_greens, viewport_blues, viewport_depths);
 
     accumulators[0] += per_rows[0];
     accumulators[1] += per_rows[1];
