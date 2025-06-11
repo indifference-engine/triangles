@@ -108,19 +108,45 @@ blended_row(const int texture_rows, const int texture_columns,
       const int texture_index =
           wrapped_texture_row * texture_columns + wrapped_texture_column;
 
-      const float opacity = accumulators[3] * texture_opacities[texture_index];
-      const float inverse_opacity = 1.0f - opacity;
-      viewport_opacities[viewport_index] =
-          1.0f - (1.0f - viewport_opacities[viewport_index]) * inverse_opacity;
-      viewport_reds[viewport_index] =
-          viewport_reds[viewport_index] * inverse_opacity +
-          accumulators[4] * texture_reds[texture_index] * opacity;
-      viewport_greens[viewport_index] =
-          viewport_greens[viewport_index] * inverse_opacity +
-          accumulators[5] * texture_greens[texture_index] * opacity;
-      viewport_blues[viewport_index] =
-          viewport_blues[viewport_index] * inverse_opacity +
-          accumulators[6] * texture_blues[texture_index] * opacity;
+      const float source_opacity =
+          accumulators[3] * texture_opacities[texture_index];
+      const float inverse_source_opacity = (1.0f - source_opacity);
+      const float destination_opacity = viewport_opacities[viewport_index];
+
+      const float opacity =
+          1.0f - inverse_source_opacity * (1.0f - destination_opacity);
+
+      if (opacity > 0.0f) {
+        viewport_opacities[viewport_index] = opacity;
+
+        const float inverse_opacity = 1.0f / opacity;
+        const float source_coefficient = source_opacity * inverse_opacity;
+        const float destination_coefficient =
+            destination_opacity * inverse_source_opacity * inverse_opacity;
+
+        const float source_red = accumulators[4] * texture_reds[texture_index];
+        const float destination_red = viewport_reds[viewport_index];
+
+        viewport_reds[viewport_index] =
+            (source_red * source_coefficient +
+             destination_red * destination_coefficient);
+
+        const float source_green =
+            accumulators[5] * texture_greens[texture_index];
+        const float destination_green = viewport_greens[viewport_index];
+
+        viewport_greens[viewport_index] =
+            (source_green * source_coefficient +
+             destination_green * destination_coefficient);
+
+        const float source_blue =
+            accumulators[6] * texture_blues[texture_index];
+        const float destination_blue = viewport_blues[viewport_index];
+
+        viewport_blues[viewport_index] =
+            (source_blue * source_coefficient +
+             destination_blue * destination_coefficient);
+      }
     }
 
     accumulators[0] += per_columns[0];
